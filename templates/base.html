@@ -1,0 +1,60 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}To-Do App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+</head>
+<body>
+    <!-- stats dashboard link -->
+    <a href="{{ url_for('stats_dashboard') }}">📊 Stats</a>
+
+    <!-- 🌙 Dark Mode Toggle -->
+    <div class="theme-toggle">
+        <label class="switch">
+            <input type="checkbox" id="themeSwitch">
+            <span class="slider round"></span>
+        </label>
+        <span id="themeLabel">Light Mode</span>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    <!-- 🌗 Dark Mode JavaScript -->
+    <script>
+        const toggle = document.getElementById('themeSwitch');
+        const label = document.getElementById('themeLabel');
+
+        // Load saved mode
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+            toggle.checked = true;
+            label.textContent = 'Dark Mode';
+        }
+
+        toggle.addEventListener('change', () => {
+            document.body.classList.toggle('dark');
+            if (document.body.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                label.textContent = 'Dark Mode';
+            } else {
+                localStorage.setItem('theme', 'light');
+                label.textContent = 'Light Mode';
+            }
+        });
+    </script>
+</body>
+</html>

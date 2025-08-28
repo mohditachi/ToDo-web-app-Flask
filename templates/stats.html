@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Stats Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="{{ 'dark' if session.get('theme') == 'dark' else '' }}">
+    <h1 style="text-align:center;">📊 Task Statistics</h1>
+    <div class="dashboard-stats">
+        <div class="card">Total Tasks: {{ total }}</div>
+        <div class="card">Pending Tasks: {{ pending }}</div>
+        <div class="card">Completed Tasks: {{ completed }}</div>
+        <div class="card">Overdue Tasks: {{ overdue }}</div>
+        <div class="card">Due Today: {{ due_today }}</div>
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+        <a href="{{ url_for('dashboard') }}">← Back to Task List</a>
+    </div>
+    <div style="max-width: 600px; margin: 40px auto;">
+        <canvas id="taskChart"></canvas>
+    </div>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const totalTasks = JSON.parse('{{ total|tojson|safe }}');
+        const taskData = JSON.parse('{{ [pending, completed, overdue, due_today]|tojson|safe }}');
+        const ctx = document.getElementById('taskChart').getContext('2d');
+        const taskChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Pending', 'Completed', 'Overdue', 'Due Today'],
+                datasets: [{
+                    label: 'Tasks',
+                    data: taskData,
+                    backgroundColor: [
+                        '#ffcd56', // Pending
+                        '#4caf50', // Completed
+                        '#f44336', // Overdue
+                        '#2196f3'  // Due Today
+                    ],
+                    borderRadius: 8,
+                    barThickness: 50
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'x', // for vertical bars; change to 'y' for horizontal
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y !== undefined ? context.parsed.y : context.parsed;
+                                const percent = totalTasks ? ((value / totalTasks) * 100).toFixed(1) : 0;
+                                return `${context.label}: ${value} (${percent}%)`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Tasks'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

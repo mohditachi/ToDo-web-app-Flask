@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+{% include 'base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+    <h1>To-Do List</h1>
+  <ul>
+{% for task in tasks %}
+    <li style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid #ddd; margin-bottom: 10px; border-left: 4px solid green;">
+        
+        <!-- LEFT SIDE: Description + Icons -->
+        <div>
+                <span class="{% if task['completed'] %}completed-task{% else %}pending-task{% endif %}">
+                    {{ task['description'] }}
+                </span>
+
+                {% if task['due_date'] %}
+                    <small style="margin-left: 10px; color: #666;">
+                        📅 {{ task['due_date'] }}
+                    </small>
+                    {% if not task['completed'] %}
+                        {% if task['overdue'] %}
+                            <span style="color: red; font-weight: bold; margin-left: 10px;">
+                                ⛔ Overdue
+                            </span>
+                        {% elif task['due_soon'] %}
+                            <span style="color: orange; font-weight: bold; margin-left: 10px;">
+                                ⚠ Due Soon
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+
+            <!-- Edit Icon -->
+            <a href="{{ url_for('edit_task', task_id=task['id']) }}" style="background: none; text-decoration: none; margin-left: 10px; font-size: 20px;">📝</a>
+
+            <!-- Delete Icon -->
+            <form action="{{ url_for('delete_task') }}" method="POST" style="display:inline;">
+                <input type="hidden" name="task_id" value="{{ task['id'] }}">
+                <button type="submit" style="background: none; border: none; font-size: 20px; cursor: pointer;">🗑️</button>
+            </form>
+        </div>
+
+        <!-- RIGHT SIDE: Checkbox -->
+        <form method="POST" action="{{ url_for('toggle_task', task_id=task['id']) }}">
+            <input type="checkbox" onchange="this.form.submit()" {% if task['completed'] %}checked{% endif %}>
+        </form>
+
+    </li>
+    {% else %}
+        <li>No tasks available.</li>
+ {% endfor %}
+   </ul>
+  <a href="{{ url_for('add_task') }}">Add Task</a>
+
+  <a href="{{ url_for('logout') }}" style="float: right; background-color: red;">Logout</a>
+{% endblock %}
+</body>
+</html>

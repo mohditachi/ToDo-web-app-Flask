@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .form-container {
+        width: 300px;
+        margin: 50px auto;
+    }
+
+    .form-container input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+
+    .form-container .password-wrapper input {
+        padding: 10px 40px 10px 10px;
+    }
+
+    .form-container .password-wrapper {
+        position: relative;
+    }
+
+    .form-container .password-wrapper i {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #555;
+    }
+
+    button {
+        padding: 5px 15px;
+        background-color: #45a049;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin-top: 5px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    p {
+        text-align: center;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Login</h2>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+
+        <div class="password-wrapper">
+            <input type="password" name="password" id="password" placeholder="Password" required>
+            <i onclick="togglePassword()" id="eye" class="fa fa-eye"></i>
+        </div>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+</div>
+
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+function togglePassword() {
+    const pass = document.getElementById("password");
+    const eye = document.getElementById("eye");
+
+    if (pass.type === "password") {
+        pass.type = "text";
+        eye.classList.remove("fa-eye");
+        eye.classList.add("fa-eye-slash");
+    } else {
+        pass.type = "password";
+        eye.classList.remove("fa-eye-slash");
+        eye.classList.add("fa-eye");
+    }
+}
+</script>
+{% endblock %}
