@@ -1,7 +1,7 @@
 Flask
 Flask-Mail
-python-dotenv
 Werkzeug
 pytz
 apscheduler
 python-dotenv
+gunicorn
